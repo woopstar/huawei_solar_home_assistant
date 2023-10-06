@@ -14,6 +14,11 @@ condition:
     above: 7
     attribute: elevation
 action:
+  - service: number.set_value
+    data:
+      value: "100"
+    target:
+      entity_id: number.battery_grid_charge_cutoff_soc
   - if:
       - condition: numeric_state
         entity_id: sensor.battery_state_of_capacity
