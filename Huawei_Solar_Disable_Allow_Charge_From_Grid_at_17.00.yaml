@@ -1,0 +1,12 @@
+alias: Huawei Solar - Disable Allow Charge From Grid at 17.00
+description: ""
+trigger:
+  - platform: time
+    at: "17:00:00"
+condition: []
+action:
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.battery_charge_from_grid
+mode: single
