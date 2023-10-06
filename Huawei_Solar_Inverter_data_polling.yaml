@@ -1,0 +1,15 @@
+alias: Huawei Solar - Inverter data polling
+description: ""
+trigger:
+  - platform: time_pattern
+    hours: "*"
+    minutes: "*"
+    seconds: /5
+condition: []
+action:
+  - service: homeassistant.update_entity
+    target:
+      entity_id:
+        - sensor.inverter_daily_yield
+    data: {}
+mode: single
