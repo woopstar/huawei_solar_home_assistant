@@ -1,0 +1,27 @@
+alias: Huawei Solar - Battery Automatic Working Mode
+description: ""
+trigger:
+  - platform: state
+    entity_id:
+      - switch.battery_charge_from_grid
+  - platform: homeassistant
+    event: start
+condition: []
+action:
+  - if:
+      - condition: state
+        entity_id: switch.battery_charge_from_grid
+        state: "on"
+    then:
+      - service: select.select_option
+        data:
+          option: Time Of Use
+        target:
+          entity_id: select.battery_working_mode
+    else:
+      - service: select.select_option
+        data:
+          option: Maximise Self Consumption
+        target:
+          entity_id: select.battery_working_mode
+mode: single
