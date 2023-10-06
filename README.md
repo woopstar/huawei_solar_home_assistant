@@ -1,5 +1,7 @@
 This is my list of automations used for my Huawei Solar Power.
 
+I'm currently having a 10kW battery.
+
 I use TOU mode to charge my battery with the [EV Smart Charging integration](https://github.com/jonasbkarlsson/ev_smart_charging) and use Maximum Self Consumption for when I'm using the battery to power house grid.
 
 TOU needs to be set to charge all days from 00:00 to 23:59 so when you switch to TOU mode, the battery will imeditately begin charging.
