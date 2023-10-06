@@ -1,0 +1,43 @@
+alias: Huawei Solar - Stop export on negative electricity price
+description: ""
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.energi_data_service_produktion
+    below: 0.02
+  - platform: numeric_state
+    entity_id: sensor.energi_data_service_produktion
+    above: 0.03
+condition: []
+action:
+  - if:
+      - condition: numeric_state
+        entity_id: sensor.energi_data_service_produktion
+        below: 0.02
+    then:
+      - service: huawei_solar.set_maximum_feed_grid_power
+        data:
+          power: "0"
+          device_id: c52adbd01ee1b99c48bed773e48ef079
+    else:
+      - service: huawei_solar.reset_maximum_feed_grid_power
+        data:
+          device_id: c52adbd01ee1b99c48bed773e48ef079
+  - if:
+      - condition: numeric_state
+        entity_id: sensor.energi_data_service
+        below: 0.02
+    then:
+      - service: huawei_solar.set_maximum_feed_grid_power
+        data:
+          power: "0"
+          device_id: c52adbd01ee1b99c48bed773e48ef079
+    else:
+      - service: huawei_solar.reset_maximum_feed_grid_power
+        data:
+          device_id: c52adbd01ee1b99c48bed773e48ef079
+  - service: automation.trigger
+    data:
+      skip_condition: true
+    target:
+      entity_id: automation.ev_smart_charging_disable_battery_while_charging_car
+mode: single
