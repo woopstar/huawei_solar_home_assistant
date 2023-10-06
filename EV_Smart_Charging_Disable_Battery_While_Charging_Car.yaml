@@ -1,0 +1,34 @@
+alias: EV Smart Charging - Disable Battery While Charging Car
+description: ""
+trigger:
+  - platform: state
+    entity_id:
+      - sensor.ev_smart_charging_charging
+condition: []
+action:
+  - if:
+      - condition: state
+        entity_id: sensor.ev_smart_charging_charging
+        state: "on"
+    then:
+      - service: number.set_value
+        data:
+          value: "10"
+        target:
+          entity_id: number.battery_maximum_discharging_power
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.goe_huawei_pv_loadbalacer_activated
+    else:
+      - service: number.set_value
+        data:
+          value: "5000"
+        target:
+          entity_id: number.battery_maximum_discharging_power
+      - service: input_boolean.turn_on
+        data: {}
+        target:
+          entity_id: input_boolean.goe_huawei_pv_loadbalacer_activated
+mode: queued
+max: 10
