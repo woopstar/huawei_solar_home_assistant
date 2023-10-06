@@ -1,0 +1,73 @@
+alias: Huawei Solar - Set finalized charge time - Day
+description: ""
+trigger:
+  - platform: state
+    entity_id:
+      - sensor.battery_state_of_capacity
+  - platform: state
+    entity_id:
+      - sun.sun
+    attribute: elevation
+condition:
+  - condition: numeric_state
+    entity_id: sun.sun
+    above: 7
+    attribute: elevation
+action:
+  - if:
+      - condition: numeric_state
+        entity_id: sensor.battery_state_of_capacity
+        below: 20
+    then:
+      - service: select.select_option
+        data:
+          option: "14:00"
+        target:
+          entity_id: select.ev_smart_charging_huawei_solar_power_charge_start_time
+  - if:
+      - condition: numeric_state
+        entity_id: sensor.battery_state_of_capacity
+        above: 20
+      - condition: numeric_state
+        entity_id: sensor.battery_state_of_capacity
+        below: 60
+    then:
+      - service: select.select_option
+        data:
+          option: "15:00"
+        target:
+          entity_id: select.ev_smart_charging_huawei_solar_power_charge_start_time
+  - if:
+      - condition: numeric_state
+        entity_id: sensor.battery_state_of_capacity
+        above: 60
+    then:
+      - service: select.select_option
+        data:
+          option: "16:00"
+        target:
+          entity_id: select.ev_smart_charging_huawei_solar_power_charge_start_time
+  - service: select.select_option
+    data:
+      option: "17:00"
+    target:
+      entity_id: select.ev_smart_charging_huawei_solar_power_charge_completion_time
+  - if:
+      - condition: template
+        value_template: >-
+          {{ as_timestamp(now()) | int  < ((now()|string)[:11] +
+          states('select.ev_smart_charging_huawei_solar_power_charge_start_time'))
+          | as_timestamp | int }}
+      - condition: state
+        entity_id: sensor.ev_smart_charging_huawei_solar_power_charging
+        state: "on"
+    then:
+      - service: switch.turn_off
+        data: {}
+        target:
+          entity_id: switch.ev_smart_charging_huawei_solar_power_smart_charging_activated
+      - service: switch.turn_on
+        data: {}
+        target:
+          entity_id: switch.ev_smart_charging_huawei_solar_power_smart_charging_activated
+mode: single
