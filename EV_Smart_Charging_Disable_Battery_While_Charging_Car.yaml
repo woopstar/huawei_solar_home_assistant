@@ -26,9 +26,5 @@ action:
           value: "5000"
         target:
           entity_id: number.battery_maximum_discharging_power
-      - service: input_boolean.turn_on
-        data: {}
-        target:
-          entity_id: input_boolean.goe_huawei_pv_loadbalacer_activated
 mode: queued
 max: 10
