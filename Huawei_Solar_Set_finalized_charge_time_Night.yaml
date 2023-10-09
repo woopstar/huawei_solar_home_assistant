@@ -1,0 +1,47 @@
+alias: Huawei Solar - Set finalized charge time - Night
+description: ""
+trigger:
+  - platform: time
+    at: "00:01:00"
+condition:
+  - condition: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    below: 7
+  - condition: template
+    value_template: "{{ (now().month >= 10 or now().month <= 3) }}"
+action:
+  - service: number.set_value
+    data:
+      value: "60"
+    target:
+      entity_id: number.battery_grid_charge_cutoff_soc
+  - service: select.select_option
+    data:
+      option: "00:00"
+    target:
+      entity_id: select.ev_smart_charging_huawei_solar_power_charge_start_time
+  - service: select.select_option
+    data:
+      option: "05:00"
+    target:
+      entity_id: select.ev_smart_charging_huawei_solar_power_charge_completion_time
+  - if:
+      - condition: template
+        value_template: >-
+          {{ as_timestamp(now()) | int  < ((now()|string)[:11] +
+          states('select.ev_smart_charging_huawei_solar_power_charge_start_time'))
+          | as_timestamp | int }}
+      - condition: state
+        entity_id: sensor.ev_smart_charging_huawei_solar_power_charging
+        state: "on"
+    then:
+      - service: switch.turn_off
+        data: {}
+        target:
+          entity_id: switch.ev_smart_charging_huawei_solar_power_smart_charging_activated
+      - service: switch.turn_on
+        data: {}
+        target:
+          entity_id: switch.ev_smart_charging_huawei_solar_power_smart_charging_activated
+mode: single
